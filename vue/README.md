@@ -29,5 +29,13 @@ Vue.js实现响应式的核心是利用ES5的Object.defineProperty(obj,prop,desc
 
 订阅器：dep.depend()、dep.notify()
 
+render --> VNode
 
+vnode --> 真实的el节点
+
+createCompiler 函数主要通过3个步骤：parse、optimize、generate来生成一个包含ast、render、staticRenderFns的对象。
+
+ASTNode 有三种形式：ASTElement，ASTExpression，ASTText
+
+render function： _c，_m，_v，_s分别是createElement，renderStatic，createTextVNode，toString
 

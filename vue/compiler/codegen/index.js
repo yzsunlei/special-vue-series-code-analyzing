@@ -40,6 +40,7 @@ export type CodegenResult = {
   staticRenderFns: Array<string>
 };
 
+// 根据 AST 结构拼接生成 render function 的字符串
 export function generate (
   ast: ASTElement | void,
   options: CompilerOptions
@@ -47,11 +48,15 @@ export function generate (
   const state = new CodegenState(options)
   const code = ast ? genElement(ast, state) : '_c("div")'
   return {
+    // 最外层包一个 with(this) 之后返回
     render: `with(this){return ${code}}`,
+    // 这个数组中的函数与 VDOM 中的 diff 算法优化相关
+    // 那些被标记为 staticRoot 节点的 VNode 就会单独生成 staticRenderFns
     staticRenderFns: state.staticRenderFns
   }
 }
 
+// 根据 AST 的属性调用不同的方法生成字符串返回，拼接字符串
 export function genElement (el: ASTElement, state: CodegenState): string {
   if (el.parent) {
     el.pre = el.pre || el.parent.pre
