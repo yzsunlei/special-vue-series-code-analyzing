@@ -33,6 +33,7 @@ export function createElement (
   normalizationType: any,
   alwaysNormalize: boolean
 ): VNode | Array<VNode> {
+  // 注意：这里会先进行一层判断，进行属性值前移
   if (Array.isArray(data) || isPrimitive(data)) {
     normalizationType = children
     children = data
@@ -41,6 +42,8 @@ export function createElement (
   if (isTrue(alwaysNormalize)) {
     normalizationType = ALWAYS_NORMALIZE
   }
+  // _createElement()是它的私有方法，创建成一个vNode，每个vNode有children，
+  // children每个元素也是一个Vnode，这样就形成了一个vNode Tree
   return _createElement(context, tag, data, children, normalizationType)
 }
 

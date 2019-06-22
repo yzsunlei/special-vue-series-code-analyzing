@@ -81,6 +81,7 @@ export function mergeDataOrFn (
   childVal: any,
   vm?: Component
 ): ?Function {
+  // 如果options.data是个函数，主要是执行函数后，再进行data的merge
   if (!vm) {
     // in a Vue.extend merge, both should be functions
     if (!childVal) {
@@ -123,7 +124,9 @@ strats.data = function (
   childVal: any,
   vm?: Component
 ): ?Function {
+  // 在Vue的组件继承树上的merge是不存在vm的
   if (!vm) {
+    // 如果子属性不是个函数，那么返回父属性的值
     if (childVal && typeof childVal !== 'function') {
       process.env.NODE_ENV !== 'production' && warn(
         'The "data" option should be a function ' +
@@ -398,8 +401,11 @@ export function mergeOptions (
     child = child.options
   }
 
+  // 统一props格式
   normalizeProps(child, vm)
+  // 统一inject格式
   normalizeInject(child, vm)
+  // 统一directives格式
   normalizeDirectives(child)
 
   // Apply extends and mixins on the child options,
@@ -417,6 +423,7 @@ export function mergeOptions (
     }
   }
 
+  // 针对不同的键值，采用不同的merge策略
   const options = {}
   let key
   for (key in parent) {

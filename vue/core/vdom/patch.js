@@ -153,6 +153,7 @@ export function createPatchFunction (backend) {
         if (data && data.pre) {
           creatingElmInVPre++
         }
+        // 忘记注册组件的时候，会经常遇到如下报错，这个刚开始的时候遇到的情况很多
         if (isUnknownElement(vnode, creatingElmInVPre)) {
           warn(
             'Unknown custom element: <' + tag + '> - did you ' +
@@ -697,6 +698,10 @@ export function createPatchFunction (backend) {
     }
   }
 
+  // oldVnode：旧的VNode节点orDOM对象
+  // VNode： 执行了_render()之后返回的VNode的节点
+  // hydrating：是否是服务端渲染，因为patch是和平台相关的，在web和weex环境下，把VNode映射到平台DOM的方法也是不同(有它自己的nodeOps和modules)
+  // removeOnly：给transition-group用的
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)

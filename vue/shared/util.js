@@ -23,6 +23,7 @@ export function isFalse (v: any): boolean %checks {
 /**
  * Check if value is primitive.
  */
+// 是否是原生类型
 export function isPrimitive (value: any): boolean %checks {
   return (
     typeof value === 'string' ||
@@ -282,6 +283,7 @@ export function genStaticKeys (modules: Array<ModuleOptions>): string {
  * Check if two values are loosely equal - that is,
  * if they are plain objects, do they have the same shape?
  */
+// 比较两个变量是否类似相等
 export function looseEqual (a: any, b: any): boolean {
   if (a === b) return true
   const isObjectA = isObject(a)

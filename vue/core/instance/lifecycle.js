@@ -33,6 +33,7 @@ export function initLifecycle (vm: Component) {
   const options = vm.$options
 
   // locate first non-abstract parent
+  // 这里判断是否存在父示例，如果存在，则通过 while 循环，建立所有组建的父子关系
   let parent = options.parent
   if (parent && !options.abstract) {
     while (parent.$options.abstract && parent.$parent) {
@@ -41,6 +42,7 @@ export function initLifecycle (vm: Component) {
     parent.$children.push(vm)
   }
 
+  // 为组件实例挂载相应属性，并初始化
   vm.$parent = parent
   vm.$root = parent ? parent.$root : vm
 
@@ -61,6 +63,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
     const prevEl = vm.$el
     const prevVnode = vm._vnode
     const restoreActiveInstance = setActiveInstance(vm)
+    // 创建一个新的vNode
     vm._vnode = vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
@@ -69,6 +72,8 @@ export function lifecycleMixin (Vue: Class<Component>) {
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
     } else {
       // updates
+      // 和之前的vNode进行diff，将需要更新的dom操作和已经patch的vNode进行对比得到需要更新的vNode，
+      // 完成真实的dom操作
       vm.$el = vm.__patch__(prevVnode, vnode)
     }
     restoreActiveInstance()

@@ -16,6 +16,7 @@ export function initExtend (Vue: GlobalAPI) {
   /**
    * Class inheritance
    */
+  // 对象扩展(继承)函数
   Vue.extend = function (extendOptions: Object): Function {
     extendOptions = extendOptions || {}
     const Super = this
@@ -26,6 +27,7 @@ export function initExtend (Vue: GlobalAPI) {
     }
 
     const name = extendOptions.name || Super.options.name
+    // 校验组件名称
     if (process.env.NODE_ENV !== 'production' && name) {
       validateComponentName(name)
     }
@@ -36,6 +38,7 @@ export function initExtend (Vue: GlobalAPI) {
     Sub.prototype = Object.create(Super.prototype)
     Sub.prototype.constructor = Sub
     Sub.cid = cid++
+    // 合并配置项
     Sub.options = mergeOptions(
       Super.options,
       extendOptions
@@ -45,9 +48,11 @@ export function initExtend (Vue: GlobalAPI) {
     // For props and computed properties, we define the proxy getters on
     // the Vue instances at extension time, on the extended prototype. This
     // avoids Object.defineProperty calls for each instance created.
+    // 初始化props
     if (Sub.options.props) {
       initProps(Sub)
     }
+    // 初始化computed
     if (Sub.options.computed) {
       initComputed(Sub)
     }
