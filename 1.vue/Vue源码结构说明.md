@@ -6,6 +6,7 @@
 * 我们先大致看一下vue项目的目录结构：
 ![vue 项目目录结构](vue-1-1.png)
 * 对目录的一些简要说明如下：
+```
 ├ benchmarks // 静态资源目录
 ├ dist       // 打包后的文件目录
 ├ examples   // 功能示例目录
@@ -15,12 +16,14 @@
 ├ src        // 功能源码目录 
 ├ test       // 代码测试目录
 └ types      // types类型文件目录 
+```
 * 其中我们重点要分析的就是src源码目录代码和examples示例目录代码。
 
 ## vue 解析要点
 * 这里我们只看vue项目的src源码目录
 ![vue 项目src源码目录结构](vue-1-2.png)
 * 对目录文件的一些简要说明如下：
+```
 src
 ├ compiler    //编译器目录
 │   ├ codegen            //
@@ -54,4 +57,4 @@ src
 └─ shared    //共享工具函数、变量目录
       ├─ constants.js  //共享变量
      └─ util.js       //共享工具函数
-   
+```
