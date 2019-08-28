@@ -2,10 +2,14 @@
 * Vue (读音 /vjuː/，类似于 view) 是一套用于构建用户界面的渐进式框架。
 
 ## vue 源码结构
-* 我们使用git工具下载最新的vue源码([https://github.com/vuejs/vue.git](https://github.com/vuejs/vue.git))。 目前最新的版本2.6.10，后面的代码分析都使用该版本。
-* 我们先大致看一下vue项目的目录结构：
-![vue 项目目录结构](vue-1-1.png)
-* 对目录的一些简要说明如下：
+* 我们使用git工具下载最新的vue源码([https://github.com/vuejs/vue.git](https://github.com/vuejs/vue.git))。 目前最新的版本2.6.10，后面的代码分析都使用该版本。 
+
+* 我们先大致看一下vue项目的目录结构： 
+
+![vue 项目目录结构](vue-1-1.png) 
+
+* 对目录的一些简要说明如下： 
+
 ```
 ├ benchmarks // 静态资源目录
 ├ dist       // 打包后的文件目录
@@ -16,13 +20,17 @@
 ├ src        // 功能源码目录 
 ├ test       // 代码测试目录
 └ types      // types类型文件目录 
-```
+``` 
+
 * 其中我们重点要分析的就是src源码目录代码和examples示例目录代码。
 
 ## vue 解析要点
-* 这里我们只看vue项目的src源码目录
-![vue 项目src源码目录结构](vue-1-2.png)
-* 对目录文件的一些简要说明如下：
+* 这里我们只看vue项目的src源码目录： 
+
+![vue 项目src源码目录结构](vue-1-2.png) 
+
+* 对目录文件的一些简要说明如下： 
+
 ```
 src
 ├ compiler    //编译器目录
@@ -55,6 +63,6 @@ src
 │    └─ parser.js     //单文件*.vue解析逻辑
 │
 └─ shared    //共享工具函数、变量目录
-      ├─ constants.js  //共享变量
+     ├─ constants.js  //共享变量
      └─ util.js       //共享工具函数
 ```
