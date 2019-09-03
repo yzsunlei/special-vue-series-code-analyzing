@@ -1,9 +1,12 @@
 # Vue系列库源码解读
 
 ## 1.Vue
-- 版本：V2.6.10 
-- [1.1.Vue初始化过程分析-new Vue()到底做了什么.md](1.1.Vue初始化过程分析-new%20Vue()到底做了什么.md)
-- [1.2.Vue双向绑定原理-Object.defineProperty数据劫持和发布订阅机制.md](1.2.Vue双向绑定原理-Object.defineProperty数据劫持和发布订阅机制.md)
+- 版本：V2.6.10
+- [1.1.Vue源码结构说明.md](1.1.Vue源码结构说明.md)
+- [1.2.Vue初始化过程分析-new Vue()到底做了什么.md](1.2.Vue初始化过程分析-new%20Vue()到底做了什么.md)
+- [1.3.Vue双向绑定原理-Object.defineProperty数据劫持和发布订阅机制.md](1.3.Vue双向绑定原理-Object.defineProperty数据劫持和发布订阅机制.md)
+- [1.4.Vue模板编译原理-Template生成AST.md](1.4.Vue模板编译原理-Template生成AST.md)
+- [1.5.Vue模板编译原理-AST生成Render字符串.md](1.5.Vue模板编译原理-AST生成Render字符串.md)
 
 ## 2.Vue-router
 版本：V3.0.6
