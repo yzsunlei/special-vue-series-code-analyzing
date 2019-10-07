@@ -23,34 +23,6 @@
 ## 6.Vue-devtools
 版本：V5.1.0
 
-# JQuery系列库源码解读
-
-## 7.jQuery
-版本：
-
-
-## 8.jquery-mousewheel
-版本：
-
-
-## 9.jquery-select2
-版本：
-
-
-## 10.jquery-ui
-版本：
-
-
-# JavaScript工具库源码解读
-
-## 11.sizzle
-版本：
-
-
-## 12.underscore
-版本：
-
-
 ## 参考资料
 * [https://cn.vuejs.org/v2/api/](https://cn.vuejs.org/v2/api/)
 * [https://ustbhuangyi.github.io/vue-analysis/](https://ustbhuangyi.github.io/vue-analysis/)
