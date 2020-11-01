@@ -18,13 +18,17 @@ const genStaticKeysCached = cached(genStaticKeys)
  *    create fresh nodes for them on each re-render;
  * 2. Completely skip them in the patching process.
  */
+// 将AST节点进行静态节点标记，即标上static和staticRoot属性
 export function optimize (root: ?ASTElement, options: CompilerOptions) {
   if (!root) return
+  // staticKeys 是那些认为不会被更改的ast的属性
   isStaticKey = genStaticKeysCached(options.staticKeys || '')
   isPlatformReservedTag = options.isReservedTag || no
   // first pass: mark all non-static nodes.
+  // 第一步 标记 AST 所有静态节点
   markStatic(root)
   // second pass: mark static roots.
+  // 第二步 标记 AST 所有父节点（即子树根节点）
   markStaticRoots(root, false)
 }
 
@@ -69,12 +73,14 @@ function markStatic (node: ASTNode) {
 
 function markStaticRoots (node: ASTNode, isInFor: boolean) {
   if (node.type === 1) {
+    // 用以标记在v-for内的静态节点。这个属性用以告诉renderStatic(_m)对这个节点生成新的key，避免patch error
     if (node.static || node.once) {
       node.staticInFor = isInFor
     }
     // For a node to qualify as a static root, it should have children that
     // are not just static text. Otherwise the cost of hoisting out will
     // outweigh the benefits and it's better off to just always render it fresh.
+    // 一个节点如果想要成为静态根，它的子节点不能单纯只是静态文本。否则，把它单独提取出来还不如重渲染时总是更新它性能高。
     if (node.static && node.children.length && !(
       node.children.length === 1 &&
       node.children[0].type === 3
@@ -104,7 +110,8 @@ function isStatic (node: ASTNode): boolean {
   if (node.type === 3) { // text
     return true
   }
-  return !!(node.pre || (
+  // 处理特殊标记
+  return !!(node.pre || ( // v-pre标记的
     !node.hasBindings && // no dynamic bindings
     !node.if && !node.for && // not v-if or v-for or v-else
     !isBuiltInTag(node.tag) && // not a built-in

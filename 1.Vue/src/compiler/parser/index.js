@@ -97,8 +97,8 @@ export function parse (
   const stack = []
   const preserveWhitespace = options.preserveWhitespace !== false
   const whitespaceOption = options.whitespace
-  let root
-  let currentParent
+  let root // 最终返回出去的AST树根节点
+  let currentParent // 当前父节点
   let inVPre = false
   let inPre = false
   let warned = false
@@ -184,6 +184,7 @@ export function parse (
     }
   }
 
+  // 检查根节点约束
   function checkRootConstraints (el) {
     if (el.tag === 'slot' || el.tag === 'template') {
       warnOnce(
@@ -210,6 +211,10 @@ export function parse (
     shouldDecodeNewlinesForHref: options.shouldDecodeNewlinesForHref,
     shouldKeepComment: options.comments,
     outputSourceRange: options.outputSourceRange,
+    /*
+    其实start方法就是处理 element 元素的过程。确定命名空间；创建AST元素 element；执行预处理；定义root；
+    处理各类 v- 标签的逻辑；最后更新 root、currentParent、stack 的结果。
+     */
     start (tag, attrs, unary, start, end) {
       // check namespace.
       // inherit parent ns if there is one
@@ -265,6 +270,9 @@ export function parse (
       }
 
       if (!inVPre) {
+        // 判断有没有 v-pre 指令的元素。如果有的话 element.pre = true
+        // 官网有介绍：<span v-pre>{{ this will not be compiled }}</span>
+        // 跳过这个元素和它的子元素的编译过程。可以用来显示原始 Mustache 标签。跳过大量没有指令的节点会加快编译。
         processPre(element)
         if (element.pre) {
           inVPre = true
@@ -274,6 +282,7 @@ export function parse (
         inPre = true
       }
       if (inVPre) {
+        // 处理原始属性
         processRawAttrs(element)
       } else if (!element.processed) {
         // structural directives
@@ -283,6 +292,7 @@ export function parse (
       }
 
       if (!root) {
+        // 如果不存在根节点
         root = element
         if (process.env.NODE_ENV !== 'production') {
           checkRootConstraints(root)

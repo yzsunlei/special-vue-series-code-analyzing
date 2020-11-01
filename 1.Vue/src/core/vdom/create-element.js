@@ -33,6 +33,7 @@ export function createElement (
   normalizationType: any,
   alwaysNormalize: boolean
 ): VNode | Array<VNode> {
+  // 注意：这里会先进行一层判断，进行属性值前移
   if (Array.isArray(data) || isPrimitive(data)) {
     normalizationType = children
     children = data
@@ -41,6 +42,8 @@ export function createElement (
   if (isTrue(alwaysNormalize)) {
     normalizationType = ALWAYS_NORMALIZE
   }
+  // _createElement()是它的私有方法，创建成一个vNode，每个vNode有children，
+  // children每个元素也是一个Vnode，这样就形成了一个vNode Tree
   return _createElement(context, tag, data, children, normalizationType)
 }
 
@@ -51,6 +54,14 @@ export function _createElement (
   children?: any,
   normalizationType?: number
 ): VNode | Array<VNode> {
+  /**
+   * 如果存在data.__ob__，说明data是被Observer观察的数据
+   * 不能用作虚拟节点的data
+   * 需要抛出警告，并返回一个空节点
+   *
+   * 被监控的data不能被用作vnode渲染的数据的原因是：
+   * data在vnode渲染过程中可能会被改变，这样会触发监控，导致不符合预期的操作
+   */
   if (isDef(data) && isDef((data: any).__ob__)) {
     process.env.NODE_ENV !== 'production' && warn(
       `Avoid using observed data object as vnode data: ${JSON.stringify(data)}\n` +
@@ -60,9 +71,11 @@ export function _createElement (
     return createEmptyVNode()
   }
   // object syntax in v-bind
+  // 当通过 :is 动态设置组件时
   if (isDef(data) && isDef(data.is)) {
     tag = data.is
   }
+  // 如果这里tag被设置成false或者不存在tag，创建一个空的节点
   if (!tag) {
     // in case of component :is set to falsy value
     return createEmptyVNode()
@@ -80,6 +93,7 @@ export function _createElement (
     }
   }
   // support single function children as default scoped slot
+  // 作用域插槽
   if (Array.isArray(children) &&
     typeof children[0] === 'function'
   ) {
@@ -87,6 +101,7 @@ export function _createElement (
     data.scopedSlots = { default: children[0] }
     children.length = 0
   }
+  // 根据normalizationType的值，选择不同的处理方法
   if (normalizationType === ALWAYS_NORMALIZE) {
     children = normalizeChildren(children)
   } else if (normalizationType === SIMPLE_NORMALIZE) {
@@ -96,14 +111,24 @@ export function _createElement (
   if (typeof tag === 'string') {
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
+    // 如果是保留的标签
     if (config.isReservedTag(tag)) {
       // platform built-in elements
+      if (process.env.NODE_ENV !== 'production' && isDef(data) && isDef(data.nativeOn)) {
+        warn(
+          `The .native modifier for v-on is only valid on components but it was used on <${tag}>.`,
+          context
+        )
+      }
       vnode = new VNode(
         config.parsePlatformTagName(tag), data, children,
         undefined, undefined, context
       )
+      // 如果不是保留标签，那么我们将尝试从vm的components上查找是否有这个标签的定义
     } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
       // component
+      // 当tag不是字符串的时候，我们认为tag是组件的构造类
+      // 所以直接创建组件
       vnode = createComponent(Ctor, data, context, children, tag)
     } else {
       // unknown or unlisted namespaced elements
@@ -118,6 +143,7 @@ export function _createElement (
     // direct component options / constructor
     vnode = createComponent(tag, data, context, children)
   }
+  // 经过上面的处理，如果能正常获得VNode，则返回，否则创建一个空的VNode
   if (Array.isArray(vnode)) {
     return vnode
   } else if (isDef(vnode)) {

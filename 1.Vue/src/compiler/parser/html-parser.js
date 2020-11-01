@@ -5,7 +5,7 @@
 /*!
  * HTML Parser By John Resig (ejohn.org)
  * Modified by Juriy "kangax" Zaytsev
- * Original code by Erik Arvidsson, Mozilla Public License
+ * Original code by Erik Arvidsson (MPL-1.1 OR Apache-2.0 OR GPL-2.0-or-later)
  * http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
  */
 
@@ -22,7 +22,7 @@ const startTagOpen = new RegExp(`^<${qnameCapture}`)
 const startTagClose = /^\s*(\/?)>/
 const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`)
 const doctype = /^<!DOCTYPE [^>]+>/i
-// #7298: escape - to avoid being pased as HTML comment when inlined in page
+// #7298: escape - to avoid being passed as HTML comment when inlined in page
 const comment = /^<!\--/
 const conditionalComment = /^<!\[/
 
@@ -59,7 +59,9 @@ export function parseHTML (html, options) {
   let index = 0
   let last, lastTag
   while (html) {
+    // 保留html副本
     last = html
+    // 如果没有lastTag，并确保我们不是在一个纯文本内容元素中：script、style、textarea
     // Make sure we're not in a plaintext content element like script/style
     if (!lastTag || !isPlainTextElement(lastTag)) {
       let textEnd = html.indexOf('<')
@@ -140,6 +142,7 @@ export function parseHTML (html, options) {
         advance(text.length)
       }
 
+      // 绘制文本内容，使用options.char方法
       if (options.chars && text) {
         options.chars(text, index - text.length, index)
       }
@@ -185,21 +188,27 @@ export function parseHTML (html, options) {
   }
 
   function parseStartTag () {
+    // 判断html中是否存在开始标签
     const start = html.match(startTagOpen)
     if (start) {
+      // 定义match结构
       const match = {
-        tagName: start[1],
-        attrs: [],
-        start: index
+        tagName: start[1], // 标签名
+        attrs: [], // 属性名
+        start: index // 起点位置
       }
+      // 通过传入变量n来截取字符串，这也是Vue解析的重要方法，通过不断地蚕食掉html字符串，一步步完成对他的解析过程
       advance(start[0].length)
       let end, attr
+      // 如果还没有到结束标签的位置
+      // 存入属性
       while (!(end = html.match(startTagClose)) && (attr = html.match(dynamicArgAttribute) || html.match(attribute))) {
         attr.start = index
         advance(attr[0].length)
         attr.end = index
         match.attrs.push(attr)
       }
+      // 返回处理后的标签match结构
       if (end) {
         match.unarySlash = end[1]
         advance(end[0].length)
@@ -210,6 +219,7 @@ export function parseHTML (html, options) {
   }
 
   function handleStartTag (match) {
+    // match 是上面调用方法的时候传递过来的数据结构
     const tagName = match.tagName
     const unarySlash = match.unarySlash
 
@@ -224,14 +234,18 @@ export function parseHTML (html, options) {
 
     const unary = isUnaryTag(tagName) || !!unarySlash
 
+    // 记录属性数组的长度
     const l = match.attrs.length
+    // 构建长度为1的空数组
     const attrs = new Array(l)
     for (let i = 0; i < l; i++) {
       const args = match.attrs[i]
+      // 取定义属性的值
       const value = args[3] || args[4] || args[5] || ''
       const shouldDecodeNewlines = tagName === 'a' && args[1] === 'href'
         ? options.shouldDecodeNewlinesForHref
         : options.shouldDecodeNewlines
+      // 改变attr的格式为 [{name: 'id', value: 'demo'}]
       attrs[i] = {
         name: args[1],
         value: decodeAttr(value, shouldDecodeNewlines)
@@ -242,11 +256,15 @@ export function parseHTML (html, options) {
       }
     }
 
+    // stack中记录当前解析的标签
+    // 如果不是自闭和标签
+    // 这里的stack这个变量在parseHTML中定义，作用是为了存放标签名 为了和结束标签进行匹配的作用。
     if (!unary) {
       stack.push({ tag: tagName, lowerCasedTag: tagName.toLowerCase(), attrs: attrs, start: match.start, end: match.end })
       lastTag = tagName
     }
 
+    // parse 函数传入的 start 方法
     if (options.start) {
       options.start(tagName, attrs, unary, match.start, match.end)
     }

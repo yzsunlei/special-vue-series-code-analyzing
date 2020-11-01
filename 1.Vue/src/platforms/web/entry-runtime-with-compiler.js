@@ -15,6 +15,7 @@ const idToTemplate = cached(id => {
 })
 
 const mount = Vue.prototype.$mount
+// 原型上添加$mount方法
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
@@ -22,6 +23,7 @@ Vue.prototype.$mount = function (
   el = el && query(el)
 
   /* istanbul ignore if */
+  // 若el挂载到body或者html上会报如下警告
   if (el === document.body || el === document.documentElement) {
     process.env.NODE_ENV !== 'production' && warn(
       `Do not mount Vue to <html> or <body> - mount to normal elements instead.`
@@ -31,6 +33,7 @@ Vue.prototype.$mount = function (
 
   const options = this.$options
   // resolve template/el and convert to render function
+  // 如果是已经render()的话，不必再compile
   if (!options.render) {
     let template = options.template
     if (template) {
@@ -56,6 +59,7 @@ Vue.prototype.$mount = function (
     } else if (el) {
       template = getOuterHTML(el)
     }
+    // 如果是template模板，需要进行compile解析
     if (template) {
       /* istanbul ignore if */
       if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -86,6 +90,8 @@ Vue.prototype.$mount = function (
  * Get outerHTML of elements, taking care
  * of SVG elements in IE as well.
  */
+// 最后会创建DOM元素，在这里内容进行覆盖，这也是为什么外层一般都要有一个父级div包裹它，
+// 而不是写在body或html上，实际上template会走一个compileToFunctions的过程
 function getOuterHTML (el: Element): string {
   if (el.outerHTML) {
     return el.outerHTML

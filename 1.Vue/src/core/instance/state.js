@@ -111,11 +111,13 @@ function initProps (vm: Component, propsOptions: Object) {
 
 function initData (vm: Component) {
   let data = vm.$options.data
+  // 这里判断data是不是一个function
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)
     : data || {}
   if (!isPlainObject(data)) {
     data = {}
+    // 会报错给我们data未初始化成一个对象的错误
     process.env.NODE_ENV !== 'production' && warn(
       'data functions should return an object:\n' +
       'https://vuejs.org/v2/guide/components.html#data-Must-Be-a-Function',
@@ -138,12 +140,14 @@ function initData (vm: Component) {
       }
     }
     if (props && hasOwn(props, key)) {
+      // 会报props和data重名一样的警告
       process.env.NODE_ENV !== 'production' && warn(
         `The data property "${key}" is already declared as a prop. ` +
         `Use prop default value instead.`,
         vm
       )
     } else if (!isReserved(key)) {
+      // 进行数据代理操作
       proxy(vm, `_data`, key)
     }
   }

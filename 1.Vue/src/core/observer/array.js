@@ -37,8 +37,10 @@ methodsToPatch.forEach(function (method) {
         inserted = args.slice(2)
         break
     }
+    // 是push、unshift、splice时，重新观察数组，因为这三个方法都是像数组中添加新的元素
     if (inserted) ob.observeArray(inserted)
     // notify change
+    // 通知变化
     ob.dep.notify()
     return result
   })
